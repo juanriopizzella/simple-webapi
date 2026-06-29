@@ -2,30 +2,25 @@
 
 This project is a hands-on exploration of:
 
-- ASP.NET Core Web API
-- Microsoft Entra ID
-- OAuth 2.0 Client Credentials Flow
+- ASP.NET Core Minimal APIs
+- OpenAPI
+- HTTP endpoints in C#
 
 ## Environment Setup
 
 Project location:
-```
-C:\Users\%USERPROFILE%\projects\simple-webapi
-```
+
+`%USERPROFILE%\projects\simple-webapi`
 
 ## .NET SDK
 
-This project uses a fixed .NET SDK version to ensure consistency across environments.
-
-### Locking SDK version
+This project uses a fixed .NET SDK version for consistency.
 
 Command used:
 
-dotnet new globaljson --sdk-version 10.0.202
+`dotnet new globaljson --sdk-version 10.0.202`
 
-Purpose:
-- Ensures the project always uses .NET 10.0.202
-- Prevents issues caused by different SDK versions
+This creates `global.json`, which tells .NET to use SDK version `10.0.202`.
 
 ## Create Web API
 
@@ -33,41 +28,23 @@ Command used:
 
 `dotnet new webapi`
 
-What it does:
-- Creates a new ASP.NET Core Web API project
-- Generates default structure (controllers, configuration, etc.)
-- Includes a sample endpoint (WeatherForecast)
-- Enables Swagger for testing APIs in the browser
+What it created:
 
----
+- A minimal ASP.NET Core Web API project
+- A `Program.cs` file that configures and starts the app
+- Configuration files like `appsettings.json` and `launchSettings.json`
+- A sample `/weatherforecast` endpoint
+- An `.http` file for testing requests from the editor
 
-## Package Restore
+## Restore Packages
 
 Command:
 
 `dotnet restore`
 
 Purpose:
-- Downloads all dependencies required by the project
-- Ensures the project can build and run correctly
 
-Note:
-- Restore may fail if package sources are misconfigured or inaccessible
-
----
-
-## Configure Package Sources (if needed)
-
-If you encounter errors during restore:
-
-- Ensure only valid and accessible package sources are enabled
-- Disable any sources that require authentication or are not needed
-
-Check sources:
-
-`dotnet nuget list source`
-
----
+- Downloads the NuGet packages required by the project
 
 ## Run the API
 
@@ -76,35 +53,31 @@ Command:
 `dotnet run`
 
 What happens:
-- Builds the project
-- Starts a local web server
 
-Important:
-- The application does NOT open a browser automatically
-- You must check the terminal output for the listening address
+- The project is built
+- A local web server starts listening on the configured URL
 
-Example output:
-```
-Now listening on: http://localhost:5046
-```
+This project’s launch settings define these local URLs:
 
----
+- `http://localhost:5046`
+- `https://localhost:7031`
 
-## Access the API
+## Test the API
 
-After running the application:
+Example endpoint:
 
-- Open your browser
-- Navigate to the URL shown in the terminal output
+`/weatherforecast`
 
-Example:
-```
-http://localhost:5046/weatherforecast
-```
-Or use Swagger UI:
-```
-http://localhost:5046/swagger
-```
-Purpose:
-- Confirms the API is running correctly
-- Allows testing endpoints
+Examples:
+
+- `http://localhost:5046/weatherforecast`
+- `https://localhost:7031/weatherforecast`
+
+You can also use the `simple-webapi.http` file in the editor to send a test request.
+
+## OpenAPI
+
+In Development, the app exposes an OpenAPI document because `AddOpenApi()` and `MapOpenApi()` are enabled in `Program.cs`.
+
+Note:
+This project does not currently include Swagger UI.
