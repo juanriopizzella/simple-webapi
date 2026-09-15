@@ -81,3 +81,15 @@ In Development, the app exposes an OpenAPI document because `AddOpenApi()` and `
 
 Note:
 This project does not currently include Swagger UI.
+
+## Where configuration comes from
+
+| # | Layer (lowest → highest priority) | What writes values into it | Active in this project? |
+|---|---|---|---|
+| 1 | `appsettings.json` | You: a committed file in the project, edited by hand | Yes — sets log levels and `AllowedHosts` |
+| 2 | `appsettings.{Environment}.json` | You: one committed file per environment. Which file loads is decided by the environment name, read from `ASPNETCORE_ENVIRONMENT` | Yes locally: `appsettings.Development.json`, because `launchSettings.json` sets `Development`. In production the name defaults to `Production`, and there is no `appsettings.Production.json` |
+| 3 | User secrets | The `dotnet user-secrets set` command, writing a `secrets.json` stored outside the project folder (under `%APPDATA%\Microsoft\UserSecrets\`). Loaded only in Development | No — the `.csproj` has no `UserSecretsId`; `dotnet user-secrets init` would add one |
+| 4 | Environment variables | `launchSettings.json`, via `dotnet run` (dev only: `applicationUrl` becomes `ASPNETCORE_URLS`, plus its `environmentVariables` block) · your own shell before running, e.g. `$env:Logging__LogLevel__Default = "Debug"` · the hosting platform or deploy scripts in production. Nested keys use `__` in place of `:` | Yes — `launchSettings.json` sets `ASPNETCORE_ENVIRONMENT` and `ASPNETCORE_URLS` |
+| 5 | Command-line arguments | Whoever launches the process: anything typed after `--` in `dotnet run -- --Logging:LogLevel:Default=Debug`, or after the `.dll` in production. It reaches configuration only because `Program.cs` passes `args` into `WebApplication.CreateBuilder(args)` | Wired up, but empty unless something is passed |
+
+Layers combine key by key: a higher layer overrides only the keys it sets, and every other key keeps its value from the layers below.
