@@ -14,13 +14,22 @@ Project location:
 
 ## .NET SDK
 
-This project uses a fixed .NET SDK version for consistency.
+This project pins its .NET SDK version in `global.json`, which currently requires **10.0.401**.
 
-Command used:
+Pinning matters because, without it, `dotnet` uses the newest SDK installed on the machine. The
+build can then change silently the day someone installs a new one, and behave differently on two
+machines with no visible cause.
 
-`dotnet new globaljson --sdk-version 10.0.401`
+The pin was originally created with:
 
-This creates `global.json`, which tells .NET to use SDK version `10.0.401`.
+`dotnet new globaljson --sdk-version 10.0.202`
+
+In September 2026 a machine update removed 10.0.202, and the build failed rather than quietly
+using a different SDK — which is the pin doing its job. It was re-pinned by editing the version
+in `global.json` by hand.
+
+To change the pinned version, edit `global.json` directly, or re-run the command above with the
+version you want.
 
 ## Create Web API
 
