@@ -18,9 +18,9 @@ This project uses a fixed .NET SDK version for consistency.
 
 Command used:
 
-`dotnet new globaljson --sdk-version 10.0.202`
+`dotnet new globaljson --sdk-version 10.0.401`
 
-This creates `global.json`, which tells .NET to use SDK version `10.0.202`.
+This creates `global.json`, which tells .NET to use SDK version `10.0.401`.
 
 ## Create Web API
 
