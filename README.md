@@ -157,3 +157,9 @@ No output means the two OpenAPI documents are identical: same semantics.
 #### Option 2: GitHub Actions
 
 Planned: run Option 1 automatically on every push.
+
+## Branch to-do
+
+Placeholder for to-do list
+
+- [ ] ...
