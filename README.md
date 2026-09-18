@@ -102,3 +102,58 @@ This project does not currently include Swagger UI.
 | 5 | Command-line arguments | Whoever launches the process: anything typed after `--` in `dotnet run -- --Logging:LogLevel:Default=Debug`, or after the `.dll` in production. It reaches configuration only because `Program.cs` passes `args` into `WebApplication.CreateBuilder(args)` | Wired up, but empty unless something is passed |
 
 Layers combine key by key: a higher layer overrides only the keys it sets, and every other key keeps its value from the layers below.
+
+## The `learning/desugar` branch
+
+Branch with the same semantics as main, but a more explicit implementation to reveal hidden ASP.NET Core mechanisms.
+
+Never merge this branch, as it is meant for learning by comparison.
+
+### Same semantics verification
+
+#### Option 1: Manual pipeline
+
+Use two PowerShell terminals: **A** runs the server, **B** makes the requests. `dotnet run` never returns, so the requests can't be typed in the terminal running it.
+
+The `http` profile matters: under `https`, requests to port 5046 get a redirect instead of the document.
+
+**A** — start the original version:
+
+```powershell
+git switch main
+dotnet run --launch-profile http
+```
+
+**B** — capture the baseline:
+
+```powershell
+curl.exe http://localhost:5046/openapi/v1.json -o $env:TEMP\openapi-baseline.json
+```
+
+**A** — stop it, switch, start the explicit version:
+
+```powershell
+# press Ctrl+C to stop the app, then:
+git switch learning/desugar
+dotnet run --launch-profile http
+```
+
+**B** — capture again:
+
+```powershell
+curl.exe http://localhost:5046/openapi/v1.json -o $env:TEMP\openapi-after.json
+```
+
+**A** — press Ctrl+C to stop the app.
+
+**B** — compare:
+
+```powershell
+Compare-Object (Get-Content $env:TEMP\openapi-baseline.json) (Get-Content $env:TEMP\openapi-after.json)
+```
+
+No output means the two OpenAPI documents are identical: same semantics.
+
+#### Option 2: GitHub Actions
+
+Planned: run Option 1 automatically on every push.
